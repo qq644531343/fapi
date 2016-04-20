@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<properties>
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/futureDB?zeroDateTimeBehavior=convertToNull&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
+	</properties>
+  <typeAliases>
+    <typeAlias alias="AllInfoModel" type="com.libo.model.AllInfoModel" />
+  </typeAliases>
+  <environments default="development">
+    <environment id="development">
+      <transactionManager type="JDBC" />
+      <dataSource type="com.libo.db.C3P0DataSourceFactory">
+        <property name="driverClass" value="com.mysql.jdbc.Driver" />
+        <property name="jdbcUrl" value="${jdbcUrl}" />
+        <property name="user" value="libo" />
+        <property name="password" value="libo123" />
+        <property name="idleConnectionTestPeriod" value="60" />  
+        <property name="maxPoolSize" value="20" />  
+        <property name="maxIdleTime" value="600" />  
+      </dataSource>
+    </environment>
+  </environments>
+  <mappers>
+    	<mapper resource="com/libo/test/TestMapper.xml" />
+  </mappers>
+</configuration>
