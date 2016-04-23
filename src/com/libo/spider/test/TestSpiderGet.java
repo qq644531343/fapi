@@ -1,6 +1,5 @@
 package com.libo.spider.test;
 
-import org.htmlparser.util.NodeList;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -24,6 +23,9 @@ public class TestSpiderGet {
 		info.setTurl("http://www.100ppi.com/sf/");
 		info.setTid("004");
 		
+		info.setTurl("http://www.100ppi.com/ppi/");
+		info.setTid("001");
+		
 		HTMLContentModel model = HTMLGetter.getHTMLContentFromInfo(info);
 		XLog.logger.debug(model.toString());
 		
@@ -35,6 +37,9 @@ public class TestSpiderGet {
 		HTMLContentModel model = new HTMLContentModel();
 		model.setTid("004");
 		model.setFilePath("/Users/libo/Desktop/log/4728dbf63d2667185ecbb6cdab1bae25");
+		
+		model.setFilePath("/Users/libo/Desktop/log/9ec0fd6da7014c185281edf71714544c");
+		model.setTid("001");
 		
 		HTMLParser.parser(model);
 	}

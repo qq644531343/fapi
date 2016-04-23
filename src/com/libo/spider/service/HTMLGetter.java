@@ -52,6 +52,7 @@ public class HTMLGetter {
 
 		XLog.logger.info("\n----------Begin To Get: " + info.getTurl());
 		HTMLContentModel model = requestForUrl(info.getTurl());
+		model.setTid(info.getTid());
 		XLog.logger.info("\n----------End ! ");
 
 		return model;
@@ -65,6 +66,7 @@ public class HTMLGetter {
 		}
 
 		CloseableHttpClient client = null;
+		CloseableHttpResponse response = null;
 		try {
 
 			client = HttpClientBuilder.create().build();
@@ -73,8 +75,8 @@ public class HTMLGetter {
 			get.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:45.0) Gecko/20100101 Firefox/45.0");
 			get.setHeader("Referer",  get.getURI().getHost());
 			
-			CloseableHttpResponse response = client.execute(get, context);
-			
+		    response = client.execute(get, context);
+			response.close();
 			return parse(response, urlString);
 
 		} catch (IOException e) {
@@ -84,6 +86,13 @@ public class HTMLGetter {
 			if (client != null) {
 				try {
 					client.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (response != null) {
+				try {
+					response.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

@@ -43,10 +43,10 @@ public class HTMLPaserUtil {
 		return null;
 	}
 	
-	public static TagNode parserTag(String html, final Class<? extends AbstractNode> tagType, final String attributName, final String attributeVAlue) {
+	public static AbstractNode parserTag(String html, final Class<? extends AbstractNode> tagType, final String attributName, final String attributeVAlue) {
 		NodeList list =  parserTags(html, tagType, attributName, attributeVAlue);
 		if (list.size() > 0) {
-			return (TagNode)list.elementAt(0);
+			return (AbstractNode)list.elementAt(0);
 		}
 		return null;
 	}
