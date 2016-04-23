@@ -14,5 +14,7 @@
        ">
 
 	<bean id="spring" class="com.libo.test.TestSpring"></bean>
+	
+	<bean id="spiderGetter" class="com.libo.spider.parser.SpiderParserGetter"></bean>
     
 </beans>

@@ -9,8 +9,9 @@ public class TestStruts {
 		
 	}
 	
-	public void sayHello() {
+	public String sayHello() {
 		System.out.println("hello struts");
+		return "success";
 	}
 	
 }
