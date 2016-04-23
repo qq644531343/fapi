@@ -77,6 +77,7 @@ public class AllInfoModel {
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
+
 	
 	@Override
 	public String toString() {

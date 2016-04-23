@@ -4,6 +4,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.libo.model.AllInfoModel;
+import com.libo.service.SpringContext;
 import com.libo.spider.model.HTMLContentModel;
 import com.libo.spider.service.HTMLGetter;
 import com.libo.spider.service.HTMLParser;
@@ -14,6 +15,7 @@ public class TestSpiderGet {
 	@BeforeClass
 	public static void setup() {
 		XLog.setup();
+		SpringContext.getContext();
 	}
 	
 	@Test
@@ -25,6 +27,9 @@ public class TestSpiderGet {
 		
 		info.setTurl("http://www.100ppi.com/ppi/");
 		info.setTid("001");
+		
+		info.setTurl("http://www.100ppi.com/price/");
+		info.setTid("002");
 		
 		HTMLContentModel model = HTMLGetter.getHTMLContentFromInfo(info);
 		XLog.logger.debug(model.toString());

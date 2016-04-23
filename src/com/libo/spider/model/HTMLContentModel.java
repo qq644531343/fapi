@@ -19,6 +19,7 @@ public class HTMLContentModel {
 	String filePath;
 	long contentLength;
 	String originUrl;
+	String userinfo;    //用户识别信息，用于处理结果返回
 	
 	public String getTid() {
 		return tid;
@@ -56,6 +57,13 @@ public class HTMLContentModel {
 	}
 	public void setContentLength(long contentLength) {
 		this.contentLength = contentLength;
+	}
+	
+	public String getUserinfo() {
+		return userinfo;
+	}
+	public void setUserinfo(String userinfo) {
+		this.userinfo = userinfo;
 	}
 	
 	@Override

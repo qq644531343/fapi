@@ -34,7 +34,7 @@ public class HTMLParser {
 			String htmlString = IOUtils.toString(new FileInputStream(model.getFilePath()));
 			SpiderParserGetter getter = (SpiderParserGetter) SpringContext.getContext().getBean("spiderGetter");
 			SpiderPaserInterface sp = getter.getSpider(model.getTid());
-			sp.parser(htmlString);
+			sp.parser(htmlString, model);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

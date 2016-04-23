@@ -8,12 +8,19 @@ import org.htmlparser.tags.TableRow;
 import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.NodeList;
 
+import com.libo.spider.model.HTMLContentModel;
 import com.libo.spider.service.HTMLPaserUtil;
+
+/**
+ * 现期表
+ * @author libo
+ *
+ */
 
 public class SpiderPaser004 implements SpiderPaserInterface {
 
 	@Override
-	public void parser(String htmlString) throws Exception{
+	public void parser(String htmlString, HTMLContentModel info) throws Exception{
 		
 		NodeList list = HTMLPaserUtil.parserTags(htmlString, TableRow.class, "bgcolor", "#fafdff");
 		 

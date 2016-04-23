@@ -10,13 +10,20 @@ import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.NodeList;
 import org.htmlparser.tags.DefinitionListBullet;
 
+import com.libo.spider.model.HTMLContentModel;
 import com.libo.spider.service.HTMLPaserUtil;
 import com.libo.tools.XLog;
+
+/**
+ * 商品站
+ * @author libo
+ *
+ */
 
 public class SpiderPaser001 implements SpiderPaserInterface {
 
 	@Override
-	public void parser(String htmlString) throws Exception {
+	public void parser(String htmlString, HTMLContentModel info) throws Exception {
 		
 		NodeList pdaoList = HTMLPaserUtil.parserTags(htmlString, Div.class, "class", "p-dao");
 		
@@ -39,7 +46,6 @@ public class SpiderPaser001 implements SpiderPaserInterface {
 						&&  "blues".equals(((TagNode) node).getAttribute("class")) 
 						|| (link != null && "blues".equals(link.getAttribute("class")))) 
 					{
-						System.out.println("!!!!!!模块开始：");
 						NodeList titles = HTMLPaserUtil.parserTags(node.toHtml(), TextNode.class, null, null);
 						TextNode title = (TextNode) titles.elementAt(0);
 						if(title.getText().trim().length() > 0) {
