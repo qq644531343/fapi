@@ -3,6 +3,7 @@ package com.libo.spider.model;
 import java.util.Date;
 
 import com.libo.tools.DateTool;
+import com.libo.tools.FileTool;
 import com.libo.tools.StringTool;
 
 /**
@@ -68,8 +69,8 @@ public class HTMLContentModel {
 	
 	@Override
 	public String toString() {
-		return "HTMLContentModel [tid="+ tid + "encoding=" + encoding + ", requestDate="
-				+ DateTool.stringFromDate(requestDate) + ", filePath=" + filePath +", length:" + StringTool.fileSize(contentLength) +", originUrl="
+		return "HTMLContentModel [tid="+ tid + ", encoding=" + encoding + ", requestDate="
+				+ DateTool.stringFromDate(requestDate) + ", filePath=" + filePath +", length:" + FileTool.fileSize(contentLength) +", originUrl="
 				+ originUrl + "]";
 	}
 	

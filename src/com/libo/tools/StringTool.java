@@ -59,26 +59,6 @@ public class StringTool {
 		return StringUtils.isNotEmpty(string);
 	}
 	
-	public static String fileSize(long size) {
-        long kb = 1024;
-        long mb = kb * 1024;
-        long gb = mb * 1024;
-        long tb = gb * 1024;
- 
-        if(size >= tb) {
-        	return String.format("%.1f GB", (float) size / tb);
-        } else if (size >= gb) {
-            return String.format("%.1f GB", (float) size / gb);
-        } else if (size >= mb) {
-            float f = (float) size / mb;
-            return String.format(f > 100 ? "%.0f MB" : "%.1f MB", f);
-        } else if (size >= kb) {
-            float f = (float) size / kb;
-            return String.format(f > 100 ? "%.0f KB" : "%.1f KB", f);
-        } else
-            return String.format("%d B", size);
-    }
-	
 	 /** 
      * @param htmlStr 
      * @return 
@@ -123,6 +103,7 @@ public class StringTool {
 		}
 		return null;
 	}
+	
 	
 	/**
 	 * 获取文件的MD5码

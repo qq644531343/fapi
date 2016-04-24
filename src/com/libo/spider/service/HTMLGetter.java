@@ -5,7 +5,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URL;
 import java.util.Date;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -14,8 +17,11 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+
 import com.libo.model.AllInfoModel;
+import com.libo.spider.config.SpiderConfig;
 import com.libo.spider.model.HTMLContentModel;
+import com.libo.tools.FileTool;
 import com.libo.tools.StringTool;
 import com.libo.tools.XLog;
 
@@ -28,11 +34,8 @@ import com.libo.tools.XLog;
 
 public class HTMLGetter {
 
-	public static final String defaultEncoding = "UTF-8";
-	public static final String tempFileDir = "/Users/libo/Desktop/log/";
-
 	static {
-		File dir = new File(tempFileDir);
+		File dir = new File(SpiderConfig.tempFileDir);
 		if (!dir.exists()) {
 			boolean res = dir.mkdir();
 			XLog.logger.info("临时目录不存在，创建临时目录 result:" + res);
@@ -43,7 +46,7 @@ public class HTMLGetter {
 
 	public static HTMLContentModel getHTMLContentFromInfo(AllInfoModel info) {
 
-		XLog.logger.info("\n----------Begin To Get: " + info.getTurl());
+		XLog.logger.info("\n\n----------Begin To Get: " + info.getTurl());
 		HTMLContentModel model = requestForUrl(info.getTurl());
 		model.setTid(info.getTid());
 		XLog.logger.info("\n----------End Get: " + info.getTurl() +"! ");
@@ -57,6 +60,12 @@ public class HTMLGetter {
 			XLog.logger.error("url为空");
 			return null;
 		}
+		
+		//判断是否应该读取缓存
+		HTMLContentModel catcheModel = checkFileExsits(urlString);
+		if(catcheModel != null) {
+			return catcheModel;
+		}
 
 		CloseableHttpClient client = null;
 		CloseableHttpResponse response = null;
@@ -64,7 +73,11 @@ public class HTMLGetter {
 
 			client = HttpClientBuilder.create().build();
 			HttpClientContext context = HttpClientContext.create();
-			HttpGet get = new HttpGet(urlString);
+			
+			 URL url1 = new URL(urlString);   
+	         URI uri = new URI(url1.getProtocol(), url1.getHost(), url1.getPath(), url1.getQuery(), null); 
+			
+			HttpGet get = new HttpGet(uri);
 			get.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:45.0) Gecko/20100101 Firefox/45.0");
 			get.setHeader("Referer",  get.getURI().getHost());
 			
@@ -72,7 +85,7 @@ public class HTMLGetter {
 
 			return parse(response, urlString);
 
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		} finally {
@@ -103,7 +116,7 @@ public class HTMLGetter {
 
 		XLog.logger.info("Start to Parsing...");
 
-		String encode = defaultEncoding;
+		String encode = SpiderConfig.defaultEncoding;
 		HttpEntity entity = response.getEntity();
 		long contentLength = response.getEntity().getContentLength();
 
@@ -114,7 +127,7 @@ public class HTMLGetter {
 
 		try {
 
-			String filepath = tempFileDir + StringTool.MD5(urlString);
+			String filepath = SpiderConfig.tempFileDir + StringTool.MD5(urlString);
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					response.getEntity().getContent(), encode));
@@ -143,6 +156,36 @@ public class HTMLGetter {
 			e.printStackTrace();
 		}
 
+		return null;
+	}
+	
+	private static HTMLContentModel checkFileExsits(String urlString) {
+		
+		String filepath = SpiderConfig.tempFileDir + StringTool.MD5(urlString);
+		File file = new File(filepath);
+	
+		if (file != null  && file.exists()) {	
+			
+			Date updateDate = FileTool.getUpdateDate(file);
+			long timeInterval = new Date().getTime() - updateDate.getTime();
+			if (timeInterval/1000 < SpiderConfig.Catch_Avaible_Minutes*60 && file.length() > 0) {
+				try {
+					HTMLContentModel model = new HTMLContentModel();
+					model.setEncoding(FileTool.getFilecharset(file));
+					model.setContentLength(file.length());
+					model.setFilePath(filepath);
+					model.setOriginUrl(urlString);
+					model.setRequestDate(updateDate);
+					
+					XLog.logger.info("\n读取缓存成功: " + urlString);
+					return model;
+				} catch (Exception e) {
+					
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		return null;
 	}
 

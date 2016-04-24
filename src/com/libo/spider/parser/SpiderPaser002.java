@@ -1,11 +1,7 @@
 package com.libo.spider.parser;
 
 import java.util.ArrayList;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.htmlparser.tags.Div;
 import org.htmlparser.tags.HeadingTag;
@@ -14,6 +10,7 @@ import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.NodeList;
 
 import com.libo.model.AllInfoModel;
+import com.libo.spider.config.SpiderConfig;
 import com.libo.spider.model.HTMLContentModel;
 import com.libo.spider.service.HTMLGetter;
 import com.libo.spider.service.HTMLParser;
@@ -27,22 +24,15 @@ import com.libo.tools.XLog;
  */
 
 public class SpiderPaser002 implements SpiderPaserInterface {
-	
-	private BlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>(); 
-	private ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 2000, 100000, TimeUnit.HOURS, queue); 
 
 	@Override
 	public void parser(String htmlString, HTMLContentModel info) throws Exception {
 		
 		if (info.getUserinfo() == null) {
 			parseForOrigin(htmlString, info);
-			System.out.println("xxxxx" + executor.getTaskCount() + "  " + executor.getCompletedTaskCount());
-			
-			executor.shutdown();
+		
 		}else if("second".equals(info.getUserinfo())) {
 			parseForSecond(htmlString, info);
-		}else if("third".equals(info.getUserinfo())) {
-			parseForThrid(htmlString, info);
 		}
 
 	}
@@ -97,8 +87,15 @@ public class SpiderPaser002 implements SpiderPaserInterface {
 					String url = "http://www.100ppi.com/price/" + link.extractLink();
 					System.out.println(name + " " + url);
 					
-					executor.execute(new Worker(url, "third"));
-					System.out.println("执行三级任务：" + url);
+					System.out.println("执行三级请求：" + url);
+					AllInfoModel info2  = new AllInfoModel();
+					info2.setTurl(url);
+					info2.setTid("002t");
+					
+					Thread.sleep(SpiderConfig.timeInterval);
+					
+					HTMLContentModel model = HTMLGetter.getHTMLContentFromInfo(info2);
+					HTMLParser.parser(model);
 				}
 			}
 			
@@ -106,10 +103,6 @@ public class SpiderPaser002 implements SpiderPaserInterface {
 			XLog.logger.error("解析失败，目标div个数为0");
 		}
 		
-	}
-	
-	private void parseForThrid(String htmlString, HTMLContentModel info) {
-		System.out.println("三级解析:" + info.getOriginUrl());
 	}
 	
 	class Worker implements Runnable {
