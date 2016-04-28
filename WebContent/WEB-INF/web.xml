@@ -10,9 +10,15 @@
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
   
+    <listener>
+     <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
+  
    <listener>
     <listener-class>com.libo.config.ServerStartupListener</listener-class>
   </listener>
+  
+
   
   <filter>
       <filter-name>struts2</filter-name>

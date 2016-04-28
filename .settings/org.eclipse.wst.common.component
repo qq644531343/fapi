@@ -2,6 +2,8 @@
     <wb-module deploy-name="fapi">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/spider"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/config"/>
         <property name="context-root" value="fapi"/>
         <property name="java-output-path" value="/fapi/build/classes"/>
     </wb-module>

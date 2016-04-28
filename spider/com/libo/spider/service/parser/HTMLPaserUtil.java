@@ -1,4 +1,4 @@
-package com.libo.spider.service;
+package com.libo.spider.service.parser;
 import org.htmlparser.Node;
 import org.htmlparser.NodeFilter;
 import org.htmlparser.Parser;
@@ -51,14 +51,6 @@ public class HTMLPaserUtil {
 		return null;
 	}
 	
-	public static String filterForPuttyString(String string) {
-		if (StringTool.isEmpty(string)) {
-			return null;
-		}
-		String plainText = StringTool.delHTMLTag(string);
-		plainText = plainText.replaceAll("生意社：", "");
-		plainText = plainText.replaceAll("生意社", "");
-		return plainText;
-	}
+	
 	
 }

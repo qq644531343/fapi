@@ -11,7 +11,7 @@ import org.htmlparser.util.NodeList;
 import org.htmlparser.tags.DefinitionListBullet;
 
 import com.libo.spider.model.HTMLContentModel;
-import com.libo.spider.service.HTMLPaserUtil;
+import com.libo.spider.service.parser.HTMLPaserUtil;
 import com.libo.tools.XLog;
 
 /**

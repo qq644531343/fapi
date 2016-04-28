@@ -16,9 +16,40 @@ isDelete  int DEFAULT 0, #是否被删除，0否
 updateDate timestamp default 0 null#更新时间
 );
 
+#价格信息存储表
+CREATE TABLE dt_priceInfo (
+	cid varchar(24) primary key, #品种id
+	cateName varchar(64) not NULL unique, #品种名, 也作为了表名
+	originUrl varchar(256)  DEFAULT "",  #品种索引url 
+	updateDate timestamp default 0 null,  #更新时间
+	visible  int default 1, #是否可见
+	torder int 	default 0		#顺序
+);
+
+#价格数据表，动态生成，表名为商品名
+
+#现期表
+CREATE TABLE dt_goodFuture (
+	goodName varchar(64) primary key, #商品名
+	goodPrice varchar(32), #现货价
+	nearCode varchar(12), #近月合约代码
+	nearPrice varchar(32), #近月合约价格
+	nearGapPrice varchar(32), #近月现期差
+	nearGapPercent varchar(12), #近月现期差率
+	mainCode varchar(12), #主力合约代码
+	mainPrice varchar(32), #主力合约价格
+	mainGapPrice varchar(32), #主力现期价差
+	mainGapPercent varchar(12), #主力现期价差率
+	tradingExchangeName varchar(32), #交易所名称
+	originUrl varchar(256), #商品链接
+	torder int default 0,  #顺序
+	updateDate timestamp default 0 null#更新时间
+);
+
+
 #类目数据导入
 insert into allInfo values ("001", "dt_goodST", "商品站", 0,"数据中心", 1, "http://www.100ppi.com/ppi/",1,0,now());
-insert into allInfo values ("002", "dt_price", "价格", 0,"数据中心", 2, "http://www.100ppi.com/price/",1,0,now());
+insert into allInfo values ("002", "dt_priceInfo", "价格", 0,"数据中心", 2, "http://www.100ppi.com/price/",1,0,now());
 insert into allInfo values ("003", "dt_goodT", "商品表", 0,"数据中心", 3, "http://futures.100ppi.com/spb/",0,0,now());
 insert into allInfo values ("004", "dt_goodFuture", "现期表", 0,"数据中心", 4, "http://www.100ppi.com/sf/",1,0,now());
 insert into allInfo values ("005", "dt_InnerFuture", "内期表", 0,"数据中心", 5, "http://futures.100ppi.com/qhb/domestic/",1,0,now());

@@ -15,6 +15,13 @@
 
 	<bean id="spring" class="com.libo.test.TestSpring"></bean>
 	
+	
+	
+	<!-- Spider DAO -->
+	
 	<bean id="spiderGetter" class="com.libo.spider.parser.SpiderParserGetter"></bean>
+	<bean id="allInfo" class="com.libo.spider.service.dao.SpiderAllInfoDAO"></bean>
+    <bean id="priceInfo" class="com.libo.spider.service.dao.SpiderPriceDAO"></bean>
+    <bean id="goodFuture" class="com.libo.spider.service.dao.SpiderGoodFutureDAO"></bean>
     
 </beans>

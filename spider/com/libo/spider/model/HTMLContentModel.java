@@ -5,6 +5,7 @@ import java.util.Date;
 import com.libo.tools.DateTool;
 import com.libo.tools.FileTool;
 import com.libo.tools.StringTool;
+import com.sun.xml.internal.ws.developer.Serialization;
 
 /**
  * 用于临时承载html内容
@@ -20,7 +21,7 @@ public class HTMLContentModel {
 	String filePath;
 	long contentLength;
 	String originUrl;
-	String userinfo;    //用户识别信息，用于处理结果返回
+	Object userinfo;    //用户识别信息，用于处理结果返回
 	
 	public String getTid() {
 		return tid;
@@ -37,6 +38,7 @@ public class HTMLContentModel {
 	public Date getRequestDate() {
 		return requestDate;
 	}
+
 	public void setRequestDate(Date requestDate) {
 		this.requestDate = requestDate;
 	}
@@ -60,10 +62,10 @@ public class HTMLContentModel {
 		this.contentLength = contentLength;
 	}
 	
-	public String getUserinfo() {
+	public Object getUserinfo() {
 		return userinfo;
 	}
-	public void setUserinfo(String userinfo) {
+	public void setUserinfo(Object userinfo) {
 		this.userinfo = userinfo;
 	}
 	

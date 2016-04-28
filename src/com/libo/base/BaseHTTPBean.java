@@ -23,6 +23,16 @@ public class BaseHTTPBean extends Exception {
 		this.msg = msg;
 	}
 	
+	public BaseHTTPBean(Object data) {
+		this();
+		this.data = data;
+	} 
+	
+	public BaseHTTPBean(Object data, String code, String msg) {
+		this(code, msg);
+		this.data = data;
+	} 
+	
 	public String getCode() {
 		return code;
 	}

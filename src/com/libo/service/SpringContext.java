@@ -26,5 +26,8 @@ public class SpringContext {
 		}
 	}
 	
+	public  static Object getBean(String beanId) {
+		return getContext().getBean(beanId);
+	}
 	
 }

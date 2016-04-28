@@ -1,4 +1,4 @@
-package com.libo.spider.service;
+package com.libo.spider.service.parser;
 
 import java.io.FileInputStream;
 

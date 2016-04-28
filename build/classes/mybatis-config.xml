@@ -6,6 +6,9 @@
 	</properties>
   <typeAliases>
     <typeAlias alias="AllInfoModel" type="com.libo.model.AllInfoModel" />
+     <typeAlias alias="HTMLPriceInfoModel" type="com.libo.spider.model.HTMLPriceInfoModel" />
+     <typeAlias alias="HTMLPriceModel" type="com.libo.spider.model.HTMLPriceModel" />
+     <typeAlias alias="HTMLGoodFutureModel" type="com.libo.spider.model.HTMLGoodFutureModel" />
   </typeAliases>
   <environments default="development">
     <environment id="development">
@@ -22,6 +25,11 @@
     </environment>
   </environments>
   <mappers>
-    	<mapper resource="com/libo/test/TestMapper.xml" />
+    	 <mapper resource="com/libo/test/TestMapper.xml" /> 
+    	 
+    	 <mapper resource="com/libo/spider/mapper/AllInfoMapper.xml"/>
+    	 <mapper resource="com/libo/spider/mapper/PriceMapper.xml"/>
+    	 <mapper resource="com/libo/spider/mapper/GoodFutureMapper.xml"/>
+    	 
   </mappers>
 </configuration>

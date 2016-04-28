@@ -1,6 +1,7 @@
 package com.libo.spider.parser;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
 import org.htmlparser.tags.Div;
@@ -10,11 +11,15 @@ import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.NodeList;
 
 import com.libo.model.AllInfoModel;
+import com.libo.service.SpringContext;
 import com.libo.spider.config.SpiderConfig;
 import com.libo.spider.model.HTMLContentModel;
-import com.libo.spider.service.HTMLGetter;
-import com.libo.spider.service.HTMLParser;
-import com.libo.spider.service.HTMLPaserUtil;
+import com.libo.spider.model.HTMLPriceInfoModel;
+import com.libo.spider.service.dao.SpiderPriceDAO;
+import com.libo.spider.service.parser.HTMLGetter;
+import com.libo.spider.service.parser.HTMLParser;
+import com.libo.spider.service.parser.HTMLPaserUtil;
+import com.libo.spider.service.parser.HTMLTool;
 import com.libo.tools.XLog;
 
 /**
@@ -65,7 +70,7 @@ public class SpiderPaser002 implements SpiderPaserInterface {
 				new Thread(work).start();
 			}
 			latch.await();
-			XLog.logger.info("二级任务执行完毕");
+			XLog.logger.info("所有价格获取完毕");
 		}else {
 			XLog.logger.error("解析失败，目标div个数为0");
 		}
@@ -87,7 +92,18 @@ public class SpiderPaser002 implements SpiderPaserInterface {
 					String url = "http://www.100ppi.com/price/" + link.extractLink();
 					System.out.println(name + " " + url);
 					
-					System.out.println("执行三级请求：" + url);
+					HTMLPriceInfoModel priceInfoModel = new HTMLPriceInfoModel();
+					priceInfoModel.setCateName(name);
+					priceInfoModel.setOriginUrl(url);
+					priceInfoModel.setVisible(true);
+					priceInfoModel.setUpdateDate(new Date());
+					int order = Integer.parseInt(HTMLTool.getSeperatedString(info.getOriginUrl()));
+					priceInfoModel.setTorder(order);
+				
+					SpiderPriceDAO priceDAO = (SpiderPriceDAO)SpringContext.getBean("priceInfo");
+					priceDAO.updatePriceInfo(priceInfoModel);
+					
+					System.out.println("执行三级请求，获取具体数据：" + url);
 					AllInfoModel info2  = new AllInfoModel();
 					info2.setTurl(url);
 					info2.setTid("002t");
@@ -95,6 +111,7 @@ public class SpiderPaser002 implements SpiderPaserInterface {
 					Thread.sleep(SpiderConfig.timeInterval);
 					
 					HTMLContentModel model = HTMLGetter.getHTMLContentFromInfo(info2);
+					model.setUserinfo(priceInfoModel);
 					HTMLParser.parser(model);
 				}
 			}

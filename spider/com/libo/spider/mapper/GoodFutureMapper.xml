@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libo.spider.service.dao.SpiderGoodFutureDAO">
+
+	<update id="updateGoodFuture" parameterType="HTMLGoodFutureModel">
+		update dt_goodFuture set goodPrice=#{goodPrice},nearCode=#{nearCode},
+				nearPrice=#{nearPrice},nearGapPrice=#{nearGapPrice},
+				nearGapPercent=#{nearGapPercent}, 
+				mainCode=#{mainCode}, 
+				mainPrice=#{mainPrice}, 
+				mainGapPrice=#{mainGapPrice}, 
+				mainGapPercent=#{mainGapPercent}, 
+				tradingExchangeName=#{tradingExchangeName}, 
+				originUrl=#{originUrl}, 
+				torder=#{torder}, 
+				updateDate=#{updateDate} 
+				where goodName=#{goodName};
+	</update>
+
+	<insert id="addGoodFuture" parameterType="HTMLGoodFutureModel" keyProperty="goodName">
+		insert into dt_goodFuture (goodName, goodPrice,nearCode,nearPrice,nearGapPrice,
+			nearGapPercent,mainCode,mainPrice,mainGapPrice,mainGapPercent,tradingExchangeName,originUrl,
+			torder,updateDate) 
+		values (#{goodName}, #{goodPrice},#{nearCode},#{nearPrice},
+			#{nearGapPrice},#{nearGapPercent}, #{mainCode},#{mainPrice},
+			#{mainGapPrice},#{mainGapPercent}, #{tradingExchangeName},#{originUrl},
+			#{torder},#{updateDate})
+	</insert>
+	
+	<select id="findGoodPrice" parameterType="String" resultType="HTMLGoodFutureModel">
+		select * from dt_goodFuture where goodName=#{goodName}
+	</select>
+	
+	<select id="findGoodFutureList" resultType="HTMLGoodFutureModel">
+		select * from dt_goodFuture order by torder;
+	</select>
+
+</mapper>

@@ -1,4 +1,4 @@
-package com.libo.spider.service;
+package com.libo.spider.service.parser;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -186,6 +186,7 @@ public class HTMLGetter {
 			}
 		}
 		
+		XLog.logger.info("\n读取缓存失败，需要请求网络: " + urlString);
 		return null;
 	}
 

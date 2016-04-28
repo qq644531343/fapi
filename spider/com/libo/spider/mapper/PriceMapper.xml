@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libo.spider.service.dao.SpiderPriceDAO">
+	
+	<update id="updatePriceInfo" parameterType="HTMLPriceInfoModel">
+		update dt_priceInfo set cateName=#{cateName},originUrl=#{originUrl},
+				updateDate=#{updateDate},visible=#{visible},torder=#{torder} where cid=#{cid};
+	</update>
+
+	<insert id="addPriceInfo" parameterType="HTMLPriceInfoModel" keyProperty="cid">
+		insert into dt_priceInfo (cid,cateName,originUrl,updateDate,visible,torder) 
+		values (#{cid}, #{cateName}, #{originUrl},#{updateDate},#{visible},#{torder})
+	</insert>
+	
+	<select id="findPriceInfoById" parameterType="String" resultType="HTMLPriceInfoModel">
+		select * from dt_priceInfo where cid=#{cid}
+	</select>
+	
+	<select id="findPriceInfoByName" parameterType="String" resultType="HTMLPriceInfoModel">
+		select * from dt_priceInfo where cateName=#{cateName}
+	</select>
+	
+	<select id="findPriceInfoList" resultType="HTMLPriceInfoModel">
+		select * from dt_priceInfo
+	</select>
+	
+	<!-- 价格数据相关 -->
+	
+	<select id="findPriceByModel" parameterType="HTMLPriceModel" resultType="HTMLPriceModel">
+		select * from  ${cateNameFormated} where cateName=#{cateName} and pubTime=#{pubTime} and company=#{company} limit 0,1
+	</select>
+	
+	<select id="findPriceList" parameterType="String" resultType="HTMLPriceModel">
+		select * from  ${_parameter} order by updateDate desc
+	</select>
+	
+	<update id="createPriceTable" parameterType="HTMLPriceModel">
+		create table if not exists ${cateNameFormated}  
+		(cid varchar(24),  cateName varchar(64),  company varchar(24),  
+		spec varchar(64) default "" null,  price varchar(24), priceType varchar(24),  
+		pubTime varchar(24),  updateDate timestamp default 0 null,  address varchar(24) default "")
+	</update>
+	
+	<insert id="addPrice" parameterType="HTMLPriceModel">
+		insert into ${cateNameFormated} (cid, cateName, company, spec, price, priceType, pubTime,updateDate, address)
+			values (#{cid}, #{cateName}, #{company}, #{spec}, #{price}, #{priceType}, #{pubTime}, #{updateDate},
+			#{address});
+	</insert>
+	
+</mapper>
