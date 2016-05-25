@@ -4,13 +4,13 @@
 <mapper namespace="com.libo.spider.service.dao.SpiderPriceDAO">
 	
 	<update id="updatePriceInfo" parameterType="HTMLPriceInfoModel">
-		update dt_priceInfo set cateName=#{cateName},originUrl=#{originUrl},
-				updateDate=#{updateDate},visible=#{visible},torder=#{torder} where cid=#{cid};
+		update dt_priceInfo set cateName=#{cateName},cateNameFormated=#{cateNameFormated},originUrl=#{originUrl},
+				updateDate=#{updateDate},visible=#{visible},torder=#{torder},kindTitle=#{kindTitle} where cid=#{cid};
 	</update>
 
 	<insert id="addPriceInfo" parameterType="HTMLPriceInfoModel" keyProperty="cid">
-		insert into dt_priceInfo (cid,cateName,originUrl,updateDate,visible,torder) 
-		values (#{cid}, #{cateName}, #{originUrl},#{updateDate},#{visible},#{torder})
+		insert into dt_priceInfo (cid,cateName,cateNameFormated,originUrl,updateDate,visible,torder,kindTitle) 
+		values (#{cid}, #{cateName},#{cateNameFormated}, #{originUrl},#{updateDate},#{visible},#{torder},#{kindTitle})
 	</insert>
 	
 	<select id="findPriceInfoById" parameterType="String" resultType="HTMLPriceInfoModel">
@@ -22,7 +22,7 @@
 	</select>
 	
 	<select id="findPriceInfoList" resultType="HTMLPriceInfoModel">
-		select * from dt_priceInfo
+		select * from dt_priceInfo order by torder
 	</select>
 	
 	<!-- 价格数据相关 -->
@@ -32,7 +32,7 @@
 	</select>
 	
 	<select id="findPriceList" parameterType="String" resultType="HTMLPriceModel">
-		select * from  ${_parameter} order by updateDate desc
+		select * from  ${_parameter} order by pubTime desc
 	</select>
 	
 	<update id="createPriceTable" parameterType="HTMLPriceModel">

@@ -1,5 +1,9 @@
 CREATE DATABASE IF NOT EXISTS futureDB DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
 
+create user 'libo'@'%' identified by 'libo123';
+
+grant create,select,insert,update,delete,drop on futureDB.* to 'libo'@'%';
+
 use futureDB;
 
 #此表用于装载所有的类目信息
@@ -20,9 +24,11 @@ updateDate timestamp default 0 null#更新时间
 CREATE TABLE dt_priceInfo (
 	cid varchar(24) primary key, #品种id
 	cateName varchar(64) not NULL unique, #品种名, 也作为了表名
+	cateNameFormated varchar(64) not NULL,
 	originUrl varchar(256)  DEFAULT "",  #品种索引url 
 	updateDate timestamp default 0 null,  #更新时间
 	visible  int default 1, #是否可见
+	kindTitle varchar(24) default "",  #行业名
 	torder int 	default 0		#顺序
 );
 

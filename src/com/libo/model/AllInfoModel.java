@@ -2,6 +2,8 @@ package com.libo.model;
 
 import java.util.Date;
 
+import org.apache.struts2.json.annotations.JSON;
+
 import com.libo.tools.DateTool;
 
 public class AllInfoModel {
@@ -71,6 +73,8 @@ public class AllInfoModel {
 	public void setIsDelete(int isDelete) {
 		this.isDelete = isDelete;
 	}
+	
+	@JSON(format="yyyy-MM-dd HH:mm:ss")
 	public Date getUpdateDate() {
 		return updateDate;
 	}

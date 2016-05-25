@@ -7,6 +7,7 @@ import java.util.concurrent.CountDownLatch;
 import org.htmlparser.tags.Div;
 import org.htmlparser.tags.HeadingTag;
 import org.htmlparser.tags.LinkTag;
+import org.htmlparser.tags.TitleTag;
 import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.NodeList;
 
@@ -81,6 +82,9 @@ public class SpiderPaser002 implements SpiderPaserInterface {
 		
 		System.out.println("二级解析:" + info.getOriginUrl());
 		
+		TitleTag titleTag = (TitleTag) HTMLPaserUtil.parserTag(htmlString, TitleTag.class, null, null);
+		String categoryTitle = titleTag.getTitle().substring(0, titleTag.getTitle().indexOf("商品价格"));
+		
 		NodeList divList = HTMLPaserUtil.parserTags(htmlString, Div.class, "class", "p_list");
 		if (divList.size() > 0) {
 			NodeIterator it = divList.elements();
@@ -99,6 +103,7 @@ public class SpiderPaser002 implements SpiderPaserInterface {
 					priceInfoModel.setUpdateDate(new Date());
 					int order = Integer.parseInt(HTMLTool.getSeperatedString(info.getOriginUrl()));
 					priceInfoModel.setTorder(order);
+					priceInfoModel.setKindTitle(categoryTitle);
 				
 					SpiderPriceDAO priceDAO = (SpiderPriceDAO)SpringContext.getBean("priceInfo");
 					priceDAO.updatePriceInfo(priceInfoModel);

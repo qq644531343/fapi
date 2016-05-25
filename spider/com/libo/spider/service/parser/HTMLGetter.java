@@ -20,6 +20,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 import com.libo.model.AllInfoModel;
 import com.libo.spider.config.SpiderConfig;
+import com.libo.spider.http.HTTPTaskDelegate;
+import com.libo.spider.http.HTTPTaskObject;
+import com.libo.spider.http.HTTPTaskQueue;
 import com.libo.spider.model.HTMLContentModel;
 import com.libo.tools.FileTool;
 import com.libo.tools.StringTool;
@@ -32,9 +35,15 @@ import com.libo.tools.XLog;
  * 
  */
 
-public class HTMLGetter {
-
-	static {
+public class HTMLGetter implements HTTPTaskDelegate {
+	
+	private HTTPTaskQueue taskQueue;
+	
+	private static HTMLGetter instance = new HTMLGetter();
+	
+	private HTMLGetter() {
+		super();
+		
 		File dir = new File(SpiderConfig.tempFileDir);
 		if (!dir.exists()) {
 			boolean res = dir.mkdir();
@@ -42,6 +51,14 @@ public class HTMLGetter {
 		}else {
 			XLog.logger.info("临时目录HTML: " + dir.toString());
 		}
+		
+		taskQueue = new HTTPTaskQueue();
+		taskQueue.setDelegate(instance);
+	}
+	
+	public static HTMLGetter sharedInstance()
+	{
+		return instance;
 	}
 
 	public static HTMLContentModel getHTMLContentFromInfo(AllInfoModel info) {
@@ -148,7 +165,7 @@ public class HTMLGetter {
 			model.setContentLength(contentLength);
 			model.setFilePath(filepath);
 			model.setOriginUrl(urlString);
-			model.setRequestDate(new Date());
+			model.setUpdateDate(new Date());
 			
 			return model;
 			
@@ -175,7 +192,7 @@ public class HTMLGetter {
 					model.setContentLength(file.length());
 					model.setFilePath(filepath);
 					model.setOriginUrl(urlString);
-					model.setRequestDate(updateDate);
+					model.setUpdateDate(updateDate);
 					
 					XLog.logger.info("\n读取缓存成功: " + urlString);
 					return model;
@@ -188,6 +205,18 @@ public class HTMLGetter {
 		
 		XLog.logger.info("\n读取缓存失败，需要请求网络: " + urlString);
 		return null;
+	}
+
+	@Override
+	public void taskBegin(HTTPTaskObject task) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void taskEnd(HTTPTaskObject task, CloseableHttpResponse response) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

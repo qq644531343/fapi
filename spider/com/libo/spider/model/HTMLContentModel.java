@@ -2,9 +2,13 @@ package com.libo.spider.model;
 
 import java.util.Date;
 
+import org.apache.struts2.json.annotations.JSON;
+import org.apache.struts2.json.annotations.JSONFieldBridge;
+
 import com.libo.tools.DateTool;
 import com.libo.tools.FileTool;
 import com.libo.tools.StringTool;
+import com.sun.org.apache.bcel.internal.generic.DDIV;
 import com.sun.xml.internal.ws.developer.Serialization;
 
 /**
@@ -13,14 +17,12 @@ import com.sun.xml.internal.ws.developer.Serialization;
  *
  */
 
-public class HTMLContentModel {
+public class HTMLContentModel extends HTMLBaseModel{
 	
 	String tid;		//类目id
 	String encoding;
-	Date   requestDate;
 	String filePath;
 	long contentLength;
-	String originUrl;
 	Object userinfo;    //用户识别信息，用于处理结果返回
 	
 	public String getTid() {
@@ -35,24 +37,12 @@ public class HTMLContentModel {
 	public void setEncoding(String encoding) {
 		this.encoding = encoding;
 	}
-	public Date getRequestDate() {
-		return requestDate;
-	}
 
-	public void setRequestDate(Date requestDate) {
-		this.requestDate = requestDate;
-	}
 	public String getFilePath() {
 		return filePath;
 	}
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
-	}
-	public String getOriginUrl() {
-		return originUrl;
-	}
-	public void setOriginUrl(String originUrl) {
-		this.originUrl = originUrl;
 	}
 	
 	public long getContentLength() {
@@ -72,7 +62,7 @@ public class HTMLContentModel {
 	@Override
 	public String toString() {
 		return "HTMLContentModel [tid="+ tid + ", encoding=" + encoding + ", requestDate="
-				+ DateTool.stringFromDate(requestDate) + ", filePath=" + filePath +", length:" + FileTool.fileSize(contentLength) +", originUrl="
+				+ DateTool.stringFromDate(updateDate) + ", filePath=" + filePath +", length:" + FileTool.fileSize(contentLength) +", originUrl="
 				+ originUrl + "]";
 	}
 	

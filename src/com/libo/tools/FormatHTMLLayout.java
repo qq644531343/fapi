@@ -165,7 +165,7 @@ public class FormatHTMLLayout extends HTMLLayout {
 		sbuf.append("<style type=\"text/css\">" + Layout.LINE_SEP);
 		sbuf.append("<!--" + Layout.LINE_SEP);
 		sbuf.append("body, table {font-family: '宋体',arial,sans-serif; font-size: 12px;}" + Layout.LINE_SEP);
-		sbuf.append("th {background: #336699; color: #FFFFFF; text-align: left;}" + Layout.LINE_SEP);
+		sbuf.append("th {background: #228B22; color: #FFFFFF; text-align: left;}" + Layout.LINE_SEP);
 		sbuf.append("-->" + Layout.LINE_SEP);
 		sbuf.append("</style>" + Layout.LINE_SEP);
 		sbuf.append("</head>" + Layout.LINE_SEP);
@@ -173,7 +173,7 @@ public class FormatHTMLLayout extends HTMLLayout {
 	//	sbuf.append("<hr size=\"1\" noshade>" + Layout.LINE_SEP);
 	//	sbuf.append("Log session start time " + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new java.util.Date()) + "<br>" + Layout.LINE_SEP);
 	//	sbuf.append("<p>" + Layout.LINE_SEP);
-		sbuf.append("<table cellspacing=\"0\" cellpadding=\"4\" border=\"1\" bordercolor=\"#224466\" width=\"100%\">" + Layout.LINE_SEP);
+		sbuf.append("<table cellspacing=\"0\" cellpadding=\"4\" border=\"1\" bordercolor=\"#E8E8E8\" width=\"100%\">" + Layout.LINE_SEP);
 		
 		
 		sbuf.append("<tr>").append(Layout.LINE_SEP);

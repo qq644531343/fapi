@@ -2,6 +2,8 @@ package com.libo.spider.model;
 
 import java.util.Date;
 
+import org.apache.struts2.json.annotations.JSON;
+
 import com.libo.tools.DateTool;
 import com.libo.tools.StringTool;
 
@@ -10,7 +12,7 @@ import com.libo.tools.StringTool;
  * @author libo
  *
  */
-public class HTMLPriceModel {
+public class HTMLPriceModel extends HTMLBaseModel{
 	
 	//对应的价格信息id
 	private String cid;
@@ -35,9 +37,6 @@ public class HTMLPriceModel {
 	//发布时间
 	private String pubTime;
 	
-	//更新时间
-	private Date updateDate;
-	
 	//报价地区
 	private String address;
 	
@@ -53,6 +52,8 @@ public class HTMLPriceModel {
 		this.cid = cid;
 		this.cateName = cateName;
 		cateNameFormated = cateName.replaceAll("-", "");
+		cateNameFormated = cateNameFormated.replaceAll(",", "");
+		cateNameFormated = cateNameFormated.replaceAll("()", "");
 		this.company = company;
 		this.spec = spec;
 		this.price = price;
@@ -77,6 +78,8 @@ public class HTMLPriceModel {
 	public void setCateName(String cateName) {
 		this.cateName = cateName;
 		cateNameFormated = cateName.replaceAll("-", "");
+		cateNameFormated = cateNameFormated.replaceAll(",", "");
+		cateNameFormated = cateNameFormated.replaceAll("()", "");
 	}
 
 	public String getCompany() {
@@ -117,14 +120,6 @@ public class HTMLPriceModel {
 
 	public void setPubTime(String pubTime) {
 		this.pubTime = pubTime;
-	}
-
-	public Date getUpdateDate() {
-		return updateDate;
-	}
-
-	public void setUpdateDate(Date updateDate) {
-		this.updateDate = updateDate;
 	}
 
 	public String getAddress() {

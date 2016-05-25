@@ -2,13 +2,15 @@ package com.libo.spider.model;
 
 import java.util.Date;
 
+import org.apache.struts2.json.annotations.JSON;
+
 /**
  * 现期表
  * @author libo
  *
  */
 
-public class HTMLGoodFutureModel {
+public class HTMLGoodFutureModel extends HTMLBaseModel{
 	
 	//商品名
 	private String goodName;
@@ -42,14 +44,6 @@ public class HTMLGoodFutureModel {
 	
 	//交易所名称
 	private String tradingExchangeName;
-	
-	//原始url
-	private String originUrl;
-	
-	//顺序
-	private int torder;
-	
-	private Date updateDate;
 	
 	public HTMLGoodFutureModel() {
 		super();
@@ -163,32 +157,6 @@ public class HTMLGoodFutureModel {
 
 	public void setTradingExchangeName(String tradingExchangeName) {
 		this.tradingExchangeName = tradingExchangeName;
-	}
-
-	public int getTorder() {
-		return torder;
-	}
-
-	public void setTorder(int torder) {
-		this.torder = torder;
-	}
-
-	public String getOriginUrl() {
-		return originUrl;
-	}
-
-	public void setOriginUrl(String originUrl) {
-		this.originUrl = originUrl;
-	}
-	
-	
-
-	public Date getUpdateDate() {
-		return updateDate;
-	}
-
-	public void setUpdateDate(Date updateDate) {
-		this.updateDate = updateDate;
 	}
 
 	@Override
