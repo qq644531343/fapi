@@ -31,5 +31,9 @@
       	<result name="md" type="redirect">jsonlist</result>
       </action>
       
+      <action name="logs" class="com.libo.test.SysLogAction" method="logs">
+      	<result>viewlog.jsp</result>
+      </action>
+      
    </package>
 </struts>

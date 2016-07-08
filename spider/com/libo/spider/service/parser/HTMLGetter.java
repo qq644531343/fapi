@@ -209,12 +209,18 @@ public class HTMLGetter implements HTTPTaskDelegate {
 
 	@Override
 	public void taskBegin(HTTPTaskObject task) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void taskEnd(HTTPTaskObject task, CloseableHttpResponse response) {
+		
+		
+	}
+
+	@Override
+	public void taskGroupFinished(String group) {
 		// TODO Auto-generated method stub
 		
 	}

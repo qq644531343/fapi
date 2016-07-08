@@ -8,6 +8,12 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts2.ServletActionContext;
+
+import com.opensymphony.xwork2.ActionContext;
+
 public class FileTool {
 
 	/**
@@ -125,5 +131,21 @@ public class FileTool {
 			e.printStackTrace();
 		}
 		return charset;
+	}
+	
+	public static String getTomcatPath() {
+		HttpServletRequest request = (HttpServletRequest) ActionContext.getContext().get(ServletActionContext.HTTP_REQUEST);
+		String path = request.getServletContext().getRealPath("/");
+		File file = new File(path);
+		if (file == null || path == null) {
+			return "";
+		}
+		return file.getParentFile().getParent();
+	}
+	
+	public static String getProjectPath() {
+		HttpServletRequest request = (HttpServletRequest) ActionContext.getContext().get(ServletActionContext.HTTP_REQUEST);
+		String path = request.getServletContext().getRealPath("/");
+		return path;
 	}
 }

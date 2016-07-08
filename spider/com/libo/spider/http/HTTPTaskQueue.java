@@ -5,25 +5,34 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
 
+import org.apache.commons.lang.ObjectUtils.Null;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import com.libo.tools.StringTool;
+import com.libo.tools.XLog;
+
 public class HTTPTaskQueue {
 
 	// 最大运行任务数
 	private int maxRunCount = 2;
 	// 任务执行间隔(秒)
-	private int taskInterval = 3;
+	private int taskInterval = 2;
 	// 任务反馈代理
 	private HTTPTaskDelegate delegate;
 	// 任务池
-	private ArrayList<HTTPTaskObject> tasklist = new ArrayList<HTTPTaskObject>();
+	private ArrayList<HashMap<String, ArrayList<HTTPTaskObject>>> tasklist = new ArrayList<HashMap<String,ArrayList<HTTPTaskObject>>>();
 
 	public HTTPTaskQueue(HTTPTaskDelegate delegate) {
 		this();
@@ -32,27 +41,72 @@ public class HTTPTaskQueue {
 
 	public HTTPTaskQueue() {
 		super();
-		startRunLoop();
 	}
 
-	public void addTask(HTTPTaskObject task) {
-		tasklist.add(task);
+	public synchronized void addTask(HTTPTaskObject task) {
+		if (StringTool.isEmpty(task.getTaskGroup())) {
+			task.setTaskGroup( "default");
+		}
+		for (int i = 0; i < tasklist.size(); i++) {
+			HashMap<String, ArrayList<HTTPTaskObject>> map = tasklist.get(i);
+			ArrayList<HTTPTaskObject> list =  map.get(task.getTaskGroup());
+			if (list != null) {
+				list.add(task);
+				return;
+			}
+		}
+		
+		HashMap<String, ArrayList<HTTPTaskObject>> map = new HashMap<String, ArrayList<HTTPTaskObject>>();
+		ArrayList<HTTPTaskObject> list =  new ArrayList<HTTPTaskObject>();
+		list.add(task);
+		map.put(task.getTaskGroup(), list);
+		tasklist.add(map);
 	}
 
-	private void startRunLoop() {
+	public void startRunLoop() {
 
-		Thread t1 = new Thread(new Producer());
-		Thread t2 = new Thread(new Producer());
-
-		t1.start();
-		t2.start();
+		for (int i = 0; i < maxRunCount; i++) {
+			Thread t = new Thread(new Producer());
+			t.start();
+			try {
+				Thread.sleep(this.getTaskInterval() * 1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
-	private synchronized HTTPTaskObject popTask() {
+	private synchronized HashMap<String, Object> popTask() {
+		
 		if (tasklist.size() == 0) {
 			return null;
 		}
-		return tasklist.remove(0);
+		
+		System.out.println("剩余任务组数:" + tasklist.size());
+		
+		HashMap<String, ArrayList<HTTPTaskObject>> map = tasklist.get(0);
+
+		HashMap<String, Object> taskMap = null;		
+		Iterator<Map.Entry<String, ArrayList<HTTPTaskObject>>> it = map.entrySet().iterator();
+		
+		while(it.hasNext()) {
+			Map.Entry<String, ArrayList<HTTPTaskObject>> entry = it.next();
+			ArrayList<HTTPTaskObject> list = entry.getValue();
+			if (list.size() > 0) {
+				taskMap = new HashMap<String, Object>();
+				taskMap.put("task", list.remove(0));
+			}
+			if (list.size() == 0) {
+				if (taskMap != null) {
+					taskMap.put("groupEnd", true);
+				}
+				tasklist.remove(0);
+			}
+			if (taskMap != null) {
+				break;
+			}
+		}
+		return taskMap;
 	}
 
 	// /////////////////////////////
@@ -99,7 +153,13 @@ public class HTTPTaskQueue {
 					}
 					
 					// 取出当前任务
-					currentTask = HTTPTaskQueue.this.popTask();
+					HashMap<String, Object> taskMap = HTTPTaskQueue.this.popTask();
+					if (taskMap == null) {
+						continue;
+					}
+					
+					currentTask = taskMap.get("task") == null ? null : (HTTPTaskObject)taskMap.get("task");
+					boolean groupEnd = (taskMap.get("groupEnd") == null ? false: (boolean)taskMap.get("groupEnd"));
 					
 					if(currentTask != null) {
 						// 开始任务的回调
@@ -107,12 +167,27 @@ public class HTTPTaskQueue {
 
 						// 发送请求
 					    Map<String, Object> map = sendHttpRequest(currentTask);
+					    if (map == null) {
+							XLog.logger.error("任务请求失败！url:" + currentTask);
+							XLog.logger.info("进行一次重试。。。" + currentTask);
+							map = sendHttpRequest(currentTask);
+							if (map == null) {
+								XLog.logger.info("重试失败，放弃任务。。。" + currentTask);
+								currentTask = null;
+								continue;
+							}
+						}
 					    
 					    CloseableHttpClient client = (CloseableHttpClient)map.get("client");
 						CloseableHttpResponse response = (CloseableHttpResponse)map.get("response");
 
 						// 结束任务的回调
 						HTTPTaskQueue.this.delegate.taskEnd(currentTask, response);
+						
+						if (groupEnd) {
+							Thread.sleep(500);
+							HTTPTaskQueue.this.delegate.taskGroupFinished(currentTask.getTaskGroup());
+						}
 						
 						if (client != null) {
 							client.close();
@@ -132,10 +207,9 @@ public class HTTPTaskQueue {
 
 		private Map<String, Object> sendHttpRequest(HTTPTaskObject task) {
 			if (task != null) {
+				CloseableHttpClient client = null;
+				CloseableHttpResponse response = null;
 				try {
-
-					CloseableHttpClient client = null;
-					CloseableHttpResponse response = null;
 					
 					client = HttpClientBuilder.create().build();
 					HttpClientContext context = HttpClientContext.create();
@@ -147,17 +221,37 @@ public class HTTPTaskQueue {
 					HttpGet get = new HttpGet(uri);
 					get.setHeader(
 							"User-Agent",
-							"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:45.0) Gecko/20100101 Firefox/45.0");
+							this.getUserAgent());
 					get.setHeader("Referer", get.getURI().getHost());
+					RequestConfig config = RequestConfig.custom().setSocketTimeout(15000).setConnectTimeout(15000).build();
+					get.setConfig(config);
 
 					response = client.execute(get, context);
-
-					HashMap<String , Object> map = new HashMap<String, Object>();
-					map.put("response", response);
-					map.put("client", client);
-					return map;
+					
+					if (client != null && response != null) {
+						HashMap<String , Object> map = new HashMap<String, Object>();
+						map.put("response", response);
+						map.put("client", client);
+						return map;
+					}else {
+						return null;
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
+					if (client != null) {
+						try {
+							client.close();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
+					if (response != null) {
+						try {
+							response.close();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
 					return null;
 				} finally {
 					
@@ -165,5 +259,30 @@ public class HTTPTaskQueue {
 			}
 			return null;
 		}
+		
+		Random random = new Random();
+		private String getUserAgent() {
+			int i = random.nextInt(4);
+			String agent = null;
+			switch (i) {
+			case 0:
+				agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:44.0) Gecko/20160520 Firefox/44.0";
+				break;
+			case 1:
+				agent = "IE/9.0 (PC; Intel Windows 10; rv:48.0) IE/9.0";
+				break;
+			case 2:
+				agent = "IE/8.0 (PC; Intel Windows 7; rv:41.0) IE/8.0";
+				break;
+			case 3:
+				agent = "Safari/5.0 (iPhone; iPhone 6s;) Safari/5.0";
+				break;
+			default:
+				break;
+			}
+			return agent;
+		}
+		
 	}
 }
+

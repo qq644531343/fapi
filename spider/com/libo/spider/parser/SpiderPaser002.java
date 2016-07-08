@@ -116,8 +116,11 @@ public class SpiderPaser002 implements SpiderPaserInterface {
 					Thread.sleep(SpiderConfig.timeInterval);
 					
 					HTMLContentModel model = HTMLGetter.getHTMLContentFromInfo(info2);
-					model.setUserinfo(priceInfoModel);
-					HTMLParser.parser(model);
+					if (model != null) {
+						model.setUserinfo(priceInfoModel);
+						HTMLParser.parser(model);
+					}
+					
 				}
 			}
 			
@@ -151,8 +154,10 @@ public class SpiderPaser002 implements SpiderPaserInterface {
 			info.setTid("002");
 			
 			HTMLContentModel model = HTMLGetter.getHTMLContentFromInfo(info);
-			model.setUserinfo(userinfo);
-			HTMLParser.parser(model);
+			if (model != null) {
+				model.setUserinfo(userinfo);
+				HTMLParser.parser(model);
+			}
 			
 			if (latch != null) {
 				latch.countDown();

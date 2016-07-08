@@ -7,4 +7,6 @@ public interface HTTPTaskDelegate {
 	public void taskBegin(HTTPTaskObject task);
 	
 	public void taskEnd(HTTPTaskObject task, CloseableHttpResponse response);
+	
+	public void taskGroupFinished(String group);
 }
